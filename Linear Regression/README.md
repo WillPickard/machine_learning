@@ -13,6 +13,7 @@ error of the hypothesis result compared to the actual output.
 
 The input file is defined as a const string at the top of linear_regression_vector_only.cpp.
 A valid file has the following format:
+
 	x1 x2 x3 ... xn y0
 	x1 x2 x3 ... xn y1
 	...	... ... ... ym
@@ -27,8 +28,11 @@ the equation.
 
 After gradientDescent() returns, a vector of theta values of size n. If n = 3, then the theta vector represents
 coeffecients for a linear equation of the form:
+
 	(t0 * x0) + (t1 * x1) +  (t2 * x2) + (t3 * x3)
+
 	x0 is always 1.
+	
 The user is then prompted to enter n variables when are then used in the hypothesis (equation above) to produce a prediction.
 
 Will Pickard
