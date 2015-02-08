@@ -1,5 +1,5 @@
-all: linear_regression_vector_only.cpp
-	g++ -o main linear_regression_vector_only.cpp
+all: logistic_regression.cpp
+	g++ -o main logistic_regression.cpp
 
 generator: generate_training_file.cpp
 	g++ -o gen generate_training_file.cpp

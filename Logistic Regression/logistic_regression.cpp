@@ -1,16 +1,13 @@
 //linear_regression.cpp
 /************
 *
-*	Trying to implement linear regression without vectorization
+*	Trying to implement logistic regression or classification, without vectorization
 *	
 *	Three main functions:
 *		h(x) - hypothesis
 *		j(x) - error function, cost function
 *		linear regression - minimizing theta for j(x)
 *
-*		h(x) = h theta (x) = theta transpose x = sum i=1:n (theta(i) * x(i) where n = number of input features
-*		j(x) = (1/2)(1/m)(sum i=0:m(( h(x(i))) - y(i)) ^ 2 )) 
-*		linear regression is too complicated to type out in this shitty notation
 *
 *************/
 #include <stdio.h>
@@ -26,7 +23,7 @@
 
 using namespace std;
 
-const char * TRAINING_FILE = "sums.txt";
+const char * TRAINING_FILE = "test.txt";
 
 const double PRECISION = 0.0000000000000001;
 const double ALPHA = 0.00000118;
@@ -35,7 +32,7 @@ static int ITERS = 0;
 class SetSizeException : public exception
 {
 	public:
-		EqualSizeException(){};
+		SetSizeException(){};
 
 		virtual const char * what() const throw()
 		{
@@ -44,8 +41,7 @@ class SetSizeException : public exception
 
 };
 
-
-double transpose(vector<double>, vector<double>);
+double multiplyVector(vector<double> a, vector<double> b);
 
 double multiplyVector(double, vector<double>);
 
@@ -104,6 +100,16 @@ int main(int argc, const char * argv[])
 		coefficients.push_back(0);
 	}
 
+	for(int i = 0; i < inputs.size(); i++)
+	{
+		for(int j = 0; j < inputs.at(i).size(); j++)
+		{
+			cout << inputs.at(i).at(j) << " ";
+		}
+		cout << " - " << outputs.at(i) << endl;
+	}
+	cout << setprecision(24) << M_E << endl;
+	//return 0;
 	cout << "calc gradientDescent" << endl;
 	
 	gradientDescent(ALPHA, &coefficients, inputs, outputs);	
@@ -149,9 +155,14 @@ const string stringifyEquation(vector<double> coefficients)
 	return s.str();
 }
 
-double transpose(vector<double> a, vector<double> b)
+double multiplyVector(vector<double> a, vector<double> b)
 {
 	double result = 0.0;
+
+	if(a.size() != b.size())
+	{
+		throw new SetSizeException();
+	}
 
 	for(int i = 0; i < a.size(); i++)
 	{
@@ -171,15 +182,22 @@ double multiplyVector(double a, vector<double> b)
 
 	return result;
 }
+
+/****
+* Hypthothesis 
+*	htheta(x) = (1/1 + e ^ (-theta transpose x))
+*	The result is the probability b/w [0,1] that the input is 1
+******/
 double h(const vector<double> coefficients, vector<double> inputs)
 {
 	double estimate = 0.0;
 	int n = inputs.size();
 
+	double mvr = multiplyVector(coefficients, inputs); //mvr is the result of multiplying the coefficients vector with the input vector
 	double result;
 	for(int i = 0; i < n; i++)
 	{	
-		result = coefficients.at(i) * inputs.at(i);
+		result = (1/(1 + (pow(M_E, (-1 * mvr))))); // 1/1+ e^(theta traspose x)
 	//	cout << setprecision(64) << "( " << coefficients.at(i) << " * " << inputs.at(i) << " ) + ";
 		estimate += result;
 	}
@@ -188,6 +206,10 @@ double h(const vector<double> coefficients, vector<double> inputs)
 	return estimate;
 }
 
+/***
+* Cost function 
+*	
+****/
 double cost(const vector<double> coefficients, vector< vector<double> > inputs, vector<double> outputs)
 {
 
